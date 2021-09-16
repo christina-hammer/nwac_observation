@@ -14,7 +14,8 @@ class Observation:
 		self.report_path = report_path
 
 		self.avalanches = []
-		self.signs_of_instability = SignsOfInstability()
+		self.signs_of_instability = None
+		self.notes = ""
 
 	def print(self):
 		print("Date: " + self.date)
@@ -26,7 +27,15 @@ class Observation:
 		print("Avalanche?: " + self.avalanche_reported)
 		print("Signs of instability?: " + self.signs_of_instability_reported)
 		print("report_path: " + self.report_path)
-		print("")
+		
+		if (len(self.avalanches) > 0):
+			print("Avalanches: ")
+			for a in self.avalanches:
+				a.print()
+
+		if(self.signs_of_instability != None):
+			print("Signs of instability: ")
+			self.signs_of_instability.print()
 
 
 class SignsOfInstability:
@@ -34,6 +43,10 @@ class SignsOfInstability:
 	def __init__(self):
 		self.shooting_cracks = ""
 		self.collapsing_or_whumpfing = ""
+
+	def print(self):
+		print("Shooting cracks? " + self.shooting_cracks)
+		print("Collapsing or whumpfing? " + self.collapsing_or_whumpfing)
 
 class Avalanche:
 
@@ -45,4 +58,13 @@ class Avalanche:
 		self.aspect = ""
 		self.comments = ""
 		self.cause = ""
+
+	def print(self):
+		print("Severity: " + self.severity)
+		print("Type: " + self.type)
+		print("Intentional: " + self.intentional)
+		print("Elevation: " + self.elevation)
+		print("Aspect: " + self.aspect)
+		print("Comments: " + self.comments)
+		print("Cause: " + self.cause)
 
