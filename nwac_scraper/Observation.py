@@ -15,7 +15,6 @@ class Observation:
 
 		self.avalanches = []
 		self.signs_of_instability = SignsOfInstability()
-		self.comments = ""
 
 	def print(self):
 		print("Date: " + self.date)
@@ -24,8 +23,8 @@ class Observation:
 		print("Latitude: " + str(self.latitude))
 		print("Longitude: " + str(self.longitude))
 		print("Location: " + self.location_name)
-		print("Avalanche?: " + self.avalanche)
-		print("Signs of instability?: " + self.signs_of_instability)
+		print("Avalanche?: " + self.avalanche_reported)
+		print("Signs of instability?: " + self.signs_of_instability_reported)
 		print("report_path: " + self.report_path)
 		print("")
 

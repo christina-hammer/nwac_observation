@@ -6,43 +6,36 @@ from ObservationParser import *
 
 def main():
 	
-	rows = get_observation_table_rows()
+	url = "https://nwac.us/observations/?season=2021&search="
+	page = requests.get(url)
+
+	soup = bs4.BeautifulSoup(page.content, 'lxml')
+
+	table = soup.find(name='table', attrs={'id':'observations'})
+
+	rows = table.tbody.findAll('tr')
 	
-	for i in range(0, 4):
+	for i in range(0, 1):
 		row = rows[i].findAll('td')
 		
 		obs = parse_table_row(row)
+		##obs = get_report(obs)
 		obs.print()
 
-def get_observation_table_rows():
-	page = fetch_page("https://nwac.us/observations/?season=2021&search=")
-
-	table = page.find(name='table', attrs={'id':'observations'})
-
-	rows = table.tbody.findAll('tr')
-	return rows
-
 ##TODO: finish this method
-def get_report(report_url, observation):
-	
-	report_page = fetch_page("https://nwac.us/public-obs/" + report_path)
-	if (report_page != None):
-		observedAvalanches = report_page.find()
+def get_report(observation):
+
+	page = requests.get("https://nwac.us/public-obs/" + observation.report_path)
+	soup = bs4.BeautifulSoup(page.text, "lxml")
+
+	print(soup)
 
 	return observation
 
 	
 
-
-	##get report details
-
 def fetch_page(url):
-	url = "https://nwac.us/observations/?season=2021&search="
-	page = requests.get(url)
-
-	soup = None
-	if (report_page.status_code < 300):
-		soup = bs4.BeautifulSoup(report_page.content, 'lxml')
+	
 
 	return soup;
 

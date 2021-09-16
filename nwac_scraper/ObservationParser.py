@@ -15,14 +15,14 @@ def parse_table_row(td_list):
 	observer_type = td_list[1].text
 	region = td_list[2].text
 	location_name = td_list[3].text
-	avalanche = td_list[4].text.lower()
-	signs_of_instability = td_list[5].text.lower()
+	avalanche_reported = td_list[4].text.lower()
+	signs_of_instability_reported = td_list[5].text.lower()
 
-	if (avalanche != "yes"):
-		avalanche = "no"
+	if (avalanche_reported != "yes"):
+		avalanche_reported = "no"
 
-	if (signs_of_instability != "yes"):
-		signs_of_instability = "no"
+	if (signs_of_instability_reported != "yes"):
+		signs_of_instability_reported = "no"
 
 	latitude = 0
 	longitude = 0
@@ -39,7 +39,7 @@ def parse_table_row(td_list):
 
 	report_path = get_report_path(location_name, date)
 
-	observation = Observation(date, observer_type, region, latitude, longitude, location_name, avalanche, signs_of_instability, report_path)
+	observation = Observation(date, observer_type, region, latitude, longitude, location_name, avalanche_reported, signs_of_instability_reported, report_path)
 	
 	return observation
 
@@ -48,7 +48,7 @@ def get_report_path(location_name, date):
 
 	location_name = location_name.lower().replace(" ", "-").replace(".", "")
 
-	return report_path
+	return report_path + location_name
 
 
 
