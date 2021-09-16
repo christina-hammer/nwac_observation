@@ -19,16 +19,23 @@ def main():
 		row = rows[i].findAll('td')
 		
 		obs = parse_table_row(row)
-		##obs = get_report(obs)
-		obs.print()
+		obs = get_report(obs)
+		#obs.print()
 
 ##TODO: finish this method
 def get_report(observation):
 
-	page = requests.get("https://nwac.us/public-obs/" + observation.report_path)
-	soup = bs4.BeautifulSoup(page.text, "lxml")
+	url = "https://nwac.us/public-obs/" + observation.report_path
+	page = requests.get(url)
+	#print(url)
 
-	print(soup)
+	soup = bs4.BeautifulSoup(page.text, "lxml")
+	divs = soup.find_all('div')
+	for d in divs:
+		text = ' '.join(d.get_text().split())
+		print(text)
+		print("-------")
+		
 
 	return observation
 
