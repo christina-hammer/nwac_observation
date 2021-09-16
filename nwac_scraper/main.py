@@ -1,10 +1,20 @@
 ##nwac observation scraper
 import requests
 import bs4
-from geopy.geocoders import Nominatim
+from ObservationParser import *
 
 
 def main():
+	
+	rows = get_observation_table_rows
+	
+	for i in range(0, 4):
+		row = rows[i].findAll('td')
+		
+		obs = parse_table_row(row)
+		obs.print()
+
+def get_observation_table_rows():
 	url = "https://nwac.us/observations/?season=2021&search="
 	page = requests.get(url)
 
@@ -12,19 +22,17 @@ def main():
 	table = soup.find(name='table', attrs={'id':'observations'})
 
 	rows = table.tbody.findAll('tr')
+	return rows
 
-	geolocator = Nominatim(user_agent="nwac_observations")
-	##will only search for locations in WA or Oregon
-	##all oregon observations will be in Mt. Hood zone
-	geocodeWA = lambda query: geolocator.geocode("%s WA" % query)
-	geocodeOR = lambda query: geolocator.geocode("%s OR" % query)
+##TODO: finish this method
+def get_report(report_url):
+	report_url = "https://nwac.us/public-obs/" + report_path
+
+	report_page = requests.get(report_url)
+	##get report details
 
 
-	for i in range(0, 4):
-		for td in rows[i].findAll('td'):
-			print(td.text)
-
-if __name__ == "main":
+if __name__ == "__main__":
 	main()
 
 
