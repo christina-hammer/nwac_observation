@@ -2,18 +2,20 @@
 
 class Observation:
 
-	def __init__(self, date, observer_type, region, latitude, longitude, location_name, avalanche, signs_of_instability, report_url):
+	def __init__(self, date, observer_type, region, latitude, longitude, location_name, avalanche, signs_of_instability, report_path):
 		self.date = date
 		self.observer_type = observer_type
 		self.region = region
 		self.latitude = latitude
 		self.longitude = longitude
 		self.location_name = location_name
-		self.avalanche = avalanche
-		self.signs_of_instability = signs_of_instability
+		self.avalanche_reported = avalanche
+		self.signs_of_instability_reported = signs_of_instability
 		self.report_path = report_path
 
-		self.get_report()
+		self.avalanches = []
+		self.signs_of_instability = SignsOfInstability()
+		self.comments = ""
 
 	def print(self):
 		print("Date: " + self.date)
@@ -28,4 +30,20 @@ class Observation:
 		print("")
 
 
+class SignsOfInstability:
+
+	def __init__(self):
+		self.shooting_cracks = ""
+		self.collapsing_or_whumpfing = ""
+
+class Avalanche:
+
+	def __init__(self):
+		self.severity = 0
+		self.type = ""
+		self.intentional = ""
+		self.elevation = ""
+		self.aspect = ""
+		self.comments = ""
+		self.cause = ""
 

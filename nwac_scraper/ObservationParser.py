@@ -37,13 +37,18 @@ def parse_table_row(td_list):
 		latitude = location.latitude
 		longitude = location.longitude
 
-	report_path = date + "_" + location_name.lower().replace(" ", "-")
+	report_path = get_report_path(location_name, date)
 
 	observation = Observation(date, observer_type, region, latitude, longitude, location_name, avalanche, signs_of_instability, report_path)
 	
 	return observation
 
+def get_report_path(location_name, date):
+	report_path = date + "_"
 
+	location_name = location_name.lower().replace(" ", "-").replace(".", "")
+
+	return report_path
 
 
 

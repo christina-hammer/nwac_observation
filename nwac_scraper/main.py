@@ -6,7 +6,7 @@ from ObservationParser import *
 
 def main():
 	
-	rows = get_observation_table_rows
+	rows = get_observation_table_rows()
 	
 	for i in range(0, 4):
 		row = rows[i].findAll('td')
@@ -15,22 +15,36 @@ def main():
 		obs.print()
 
 def get_observation_table_rows():
-	url = "https://nwac.us/observations/?season=2021&search="
-	page = requests.get(url)
+	page = fetch_page("https://nwac.us/observations/?season=2021&search=")
 
-	soup = bs4.BeautifulSoup(page.content, 'lxml')
-	table = soup.find(name='table', attrs={'id':'observations'})
+	table = page.find(name='table', attrs={'id':'observations'})
 
 	rows = table.tbody.findAll('tr')
 	return rows
 
 ##TODO: finish this method
-def get_report(report_url):
-	report_url = "https://nwac.us/public-obs/" + report_path
+def get_report(report_url, observation):
+	
+	report_page = fetch_page("https://nwac.us/public-obs/" + report_path)
+	if (report_page != None):
+		observedAvalanches = report_page.find()
 
-	report_page = requests.get(report_url)
+	return observation
+
+	
+
+
 	##get report details
 
+def fetch_page(url):
+	url = "https://nwac.us/observations/?season=2021&search="
+	page = requests.get(url)
+
+	soup = None
+	if (report_page.status_code < 300):
+		soup = bs4.BeautifulSoup(report_page.content, 'lxml')
+
+	return soup;
 
 if __name__ == "__main__":
 	main()
