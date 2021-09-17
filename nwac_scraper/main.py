@@ -15,14 +15,14 @@ def main():
 
 	rows = table.tbody.findAll('tr')
 	
-	for i in range(0, 1):
+	for i in range(12, 16):
 		row = rows[i].findAll('td')
 		
 		obs = parse_table_row(row)
 
 		obs = get_report_details(obs)
 
-		#obs.print()
+		obs.print()
 
 if __name__ == "__main__":
 	main()

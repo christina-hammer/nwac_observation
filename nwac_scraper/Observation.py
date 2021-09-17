@@ -37,6 +37,8 @@ class Observation:
 			print("Signs of instability: ")
 			self.signs_of_instability.print()
 
+		print("Notes: " + self.notes)
+
 
 class SignsOfInstability:
 
@@ -51,7 +53,7 @@ class SignsOfInstability:
 class Avalanche:
 
 	def __init__(self):
-		self.severity = 0
+		self.size = ""
 		self.type = ""
 		self.intentional = ""
 		self.elevation = ""
@@ -60,7 +62,7 @@ class Avalanche:
 		self.cause = ""
 
 	def print(self):
-		print("Severity: " + self.severity)
+		print("Size " + self.size)
 		print("Type: " + self.type)
 		print("Intentional: " + self.intentional)
 		print("Elevation: " + self.elevation)

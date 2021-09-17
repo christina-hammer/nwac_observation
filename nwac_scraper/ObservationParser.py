@@ -1,5 +1,8 @@
 from geopy.geocoders import Nominatim
 from Observation import *
+import requests
+import bs4
+from string import punctuation
 
 geolocator = Nominatim(user_agent="nwac_observations")
 
@@ -48,7 +51,13 @@ def parse_table_row(td_list):
 def get_report_path(location_name, date):
 	report_path = date + "_"
 
-	location_name = location_name.lower().replace(" ", "-").replace(".", "")
+	#strip trailing and leading whitespaces and punctuation (ex: Denny Mt. =should be=> Denny Mt)
+	location_name = location_name.strip(punctuation).strip()
+
+	#all non-leading, non-trailing whitespaces/punctuation should be - char
+	#TODO: consider using a more compact/readble way to do this instead of the multiple replace statements
+	location_name = location_name.lower().replace(" ", "-").replace(".", "-").replace("/","-")
+	location_name = location_name.replace("(", "").replace(")", "")
 
 	return report_path + location_name
 
@@ -63,42 +72,43 @@ def get_report_details(observation):
 
 	#There is only one section for each of these even if multiple triggered or observed avalanches occurred
 	avalanche = None
-	gathering_avalanche_data = false
 	for d in divs:
 
 		#this removes whitespaces/newlines/tabs
 		field = ' '.join(d.get_text().split())
 
-		#for most text lines will end up with observation report field in kv pair
-		field_pair = field.split(": ", 1)
-
-		if (len(field_pair) < 2):
-			#some field titles have question mark insead of color (ex: Did you trigger the avalanche? Yes)
-			field_pair = field_pair[0].split("? ")
-
-		#last field for each avalanche (if any) is "comments"
-		if ("Comments" in field_pair[0]):
-			avalanche.comments = field_pair[1]
-			observation.avalanches.append(avalanche)
-		elif (len(field_pair) > 1):
-			if("cracks" in field):
-				observation.signs_of_instability = SignsOfInstability()
-				observation.signs_of_instability.shooting_cracks = value
-			elif("collapsing" in field_pair):
-				observation.signs_of_instability.collapsing_or_whumpfing = value
-			else:
-				avalanche = assign_avalanche_value(field_pair, avalanche)
-		elif("Observations" in field_pair[0][0:12]):
-			observation.notes = field_pair[0]
-
-		elif("Triggered Avalanches" in field_pair[0]):
+		#for the observation notes, will always be under the 'observations' header
+		if("Observations" in field[0:12]):
+			observation.notes = field[12:]
+		elif("Triggered Avalanches" in field):
 			avalanche = Avalanche()
 			avalanche.cause = "triggered"
-		elif("Observed Avalanches" in field[0]):
+		elif("Observed Avalanches" in field):
 			avalanche = Avalanche()
 			avalanche.cause = "observed"
 			avalanche.intentional = "No"
-		
+		else:
+			#for most text lines will end up with observation report field in kv pair
+			field_pair = field.split(": ", 1)
+
+			if (len(field_pair) < 2):
+				#some field titles have question mark insead of color (ex: Did you trigger the avalanche? Yes)
+				field_pair = field_pair[0].split("? ")
+
+			#last field for each avalanche (if any) is "comments"
+			if ("Comments" in field_pair[0]):
+				if(len(field_pair) > 1):
+					avalanche.comments = field_pair[1]
+				observation.avalanches.append(avalanche)
+			elif (len(field_pair) > 1):
+				if("cracks" in field):
+					observation.signs_of_instability = SignsOfInstability()
+					observation.signs_of_instability.shooting_cracks = field_pair[1]
+				elif("collapsing" in field_pair[0]):
+					observation.signs_of_instability.collapsing_or_whumpfing = field_pair[1]
+				else:
+					avalanche = assign_avalanche_value(field_pair[0], field_pair[1], avalanche)
+			
 	return observation
 
 def assign_avalanche_value(key, val, avalanche):
@@ -107,13 +117,13 @@ def assign_avalanche_value(key, val, avalanche):
 		avalanche.type = val
 	elif("size" in key):
 		avalanche.size = val
-	elif("intentional" in key)
+	elif("intentional" in key):
 		avalanche.intentional = val
- 	elif("elevation" in key)
+	elif("elevation" in key):
  		avalanche.elevation = val
- 	elif("aspect" in key):
+	elif("aspect" in key):
  		avalanche.aspect = val
- 	return avalanche
+	return avalanche
 
 
 
