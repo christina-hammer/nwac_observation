@@ -4,12 +4,12 @@ import requests
 import bs4
 from string import punctuation
 
-geolocator = Nominatim(user_agent="nwac_observations")
+#geolocator = Nominatim(user_agent="nwac_observations")
 
 ##will only search for locations in WA or Oregon
 ##Note - all oregon observations will be in Mt. Hood zone
-geocodeWA = lambda query: geolocator.geocode("%s WA" % query)
-geocodeOR = lambda query: geolocator.geocode("%s OR" % query)
+#geocodeWA = lambda query: geolocator.geocode("%s WA" % query)
+#geocodeOR = lambda query: geolocator.geocode("%s OR" % query)
 
 
 def parse_table_row(td_list):
@@ -30,10 +30,11 @@ def parse_table_row(td_list):
 	latitude = 0
 	longitude = 0
 	location = None
-	if (region == "Mt Hood" or (region == "Other" and ("Oregon" in location_name.lower() or ", OR" in location_name.lower()))):
-		location = geocodeOR(location_name)
-	else:
-		location = geocodeWA(location_name)
+	#if (region == "Mt Hood" or (region == "Other" and ("Oregon" in location_name.lower() or ", OR" in location_name.lower()))):
+		
+		#location = geocodeOR(location_name)
+	#else:
+		#location = geocodeWA(location_name)
 		
 
 	if (location is not None):
