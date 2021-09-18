@@ -2,7 +2,8 @@
 import requests
 import bs4
 from ObservationParser import *
-
+import time
+from CosmosHelper import *
 
 def main():
 	
@@ -15,45 +16,44 @@ def main():
 
 	rows = table.tbody.findAll('tr')
 	
-	##TODO: instead of looping through and parsing twice, save the parsed table rows!!
-	report_path_multiples = get_report_path_multiples(rows)
-
-	for i in range(100, (len(rows) - 1)):
-		
-		row = rows[i].findAll('td')
-		obs = parse_table_row(row)
-
-		#duplicate check
-		##update report path
-
-		#step to add lat long 
-		obs = get_report_details(obs)
-
-		#obs.print()
-
-def 
-
-
-##check function naming convention
-def get_report_path_multiples(rows):
-
+	#the date and location strings for an observation are used to form the unique id used to form the url w/ the report details
+	#this is also important b/c need unique ID for db
+	#if 2+ observations share a date and location, suffix is added to id of newer report
+	#ex: "nwac.us/public-obs/12345678-location-name", "nwac.us/public-obs/12345678-location-name-2"
+	#if multiple reports share a date/location, this dict. will count up how many so proper suffixes can be applied to the obs.id which is used to form the report url
 	multiples = {}
-	prev_report_path = ""
 
-	for i in range(0, (len(rows) - 1)):
+	#table is in descending order by date 
+	#need to compare w/ previous to see if date/location are same b/c it means id suffix needed
+	prev_id = ""
+
+	observations = []
+
+	for i in range(700, 750):
 		
 		row = rows[i].findAll('td')
-		obs = parse_table_row(row)
+		observation = parse_table_row(row)
 
-		if (obs.report_path == prev_report_path):
-			if (obs.report_path in multiples):
-				multiples[obs.report_path]++
+		if (observation.id == prev_id):
+			if (observation.id in multiples):
+				multiples[observation.id] += 1
 			else:
-				multiples[obs.report_path] = 2
+				#start at 2 b/c url suffix for multiples starts at 2
+				multiples[observation.id] = 2
 
-		prev_report_path = obs.report_path
+		prev_id = observation.id
+		observations.append(observation)
 
-	return multiples
+	for observation in observations:
+
+		id_val = observation.id
+
+		if((id_val in multiples) and (multiples[id_val] > 1)):
+			observation.id = id_val + "-" + str(multiples[id_val])
+			multiples[id_val] -= 1
+
+		observation = set_report_details(observation)
+		#CosmosHelper.create_document(observation)
 
 
 if __name__ == "__main__":

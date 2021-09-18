@@ -4,14 +4,6 @@ import requests
 import bs4
 from string import punctuation
 
-#geolocator = Nominatim(user_agent="nwac_observations")
-
-##will only search for locations in WA or Oregon
-##Note - all oregon observations will be in Mt. Hood zone
-#geocodeWA = lambda query: geolocator.geocode("%s WA" % query)
-#geocodeOR = lambda query: geolocator.geocode("%s OR" % query)
-
-
 def parse_table_row(td_list):
 	
 	date = td_list[0].text[1:9]
@@ -27,30 +19,43 @@ def parse_table_row(td_list):
 	if (signs_of_instability_reported != "yes"):
 		signs_of_instability_reported = "no"
 
+	id_val = get_id(location_name, date)
+
+	observation = Observation(date, observer_type, region, location_name, avalanche_reported, signs_of_instability_reported, id_val)
+
+	return observation
+
+
+def set_latitude_longitude(observation):
+
+	geolocator = Nominatim(user_agent="nwac_observations")
+
+	##will only search for locations in WA or Oregon
+	##Note - all oregon observations will be in Mt. Hood zone
+	geocodeWA = lambda query: geolocator.geocode("%s WA" % query)
+	geocodeOR = lambda query: geolocator.geocode("%s OR" % query)
+
 	latitude = 0
 	longitude = 0
 	location = None
-	#if (region == "Mt Hood" or (region == "Other" and ("Oregon" in location_name.lower() or ", OR" in location_name.lower()))):
-		
-		#location = geocodeOR(location_name)
-	#else:
-		#location = geocodeWA(location_name)
-		
 
+	if (observation.region == "Mt Hood" or (observation.region == "Other" and ("Oregon" in observation.location_name.lower() or ", OR" in observation.location_name.lower()))):
+		location = geocodeOR(observation.location_name)
+	else:
+		location = geocodeWA(observation.location_name)
+		
 	if (location is not None):
-		latitude = location.latitude
-		longitude = location.longitude
+		observation.latitude = location.latitude
+		observation.longitude = location.longitude
 
-	report_path = get_report_path(location_name, date)
-
-	observation = Observation(date, observer_type, region, latitude, longitude, location_name, avalanche_reported, signs_of_instability_reported, report_path)
-	
 	return observation
+
+
 
 #forms end of url to get full observation report
 #TODO: for duplicate location and dates, url adds number on the end
-def get_report_path(location_name, date):
-	report_path = date + "_"
+def get_id(location_name, date):
+	id_string = date + "_"
 
 	#strip trailing and leading whitespaces and punctuation (ex: Denny Mt. =should be=> Denny Mt)
 	location_name = location_name.strip(punctuation).strip()
@@ -60,13 +65,12 @@ def get_report_path(location_name, date):
 	location_name = location_name.lower().replace(" ", "-").replace(".", "-").replace("/","-")
 	location_name = location_name.replace("(", "").replace(")", "")
 
-	return report_path + location_name
+	return id_string + location_name
 
 #uses url path from date and location to get avalanche/soi details (if any) and observation notes
-def get_report_details(observation):
+def set_report_details(observation):
 
-	url = "https://nwac.us/public-obs/" + observation.report_path
-	page = requests.get(url)
+	page = requests.get("https://nwac.us/public-obs/" + observation.id)
 
 	soup = bs4.BeautifulSoup(page.text, "lxml")
 	divs = soup.find_all('div')
