@@ -29,7 +29,7 @@ def main():
 
 	observations = []
 
-	for i in range(700, 750):
+	for i in range(0, 6):
 		
 		row = rows[i].findAll('td')
 		observation = parse_table_row(row)
@@ -53,7 +53,7 @@ def main():
 			multiples[id_val] -= 1
 
 		observation = set_report_details(observation)
-		#CosmosHelper.create_document(observation)
+		CosmosHelper.create_document(observation)
 
 
 if __name__ == "__main__":
