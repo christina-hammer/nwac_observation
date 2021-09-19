@@ -29,6 +29,8 @@ def main():
 
 	observations = []
 
+	cosmos = CosmosHelper()
+
 	for i in range(0, 6):
 		
 		row = rows[i].findAll('td')
@@ -53,7 +55,7 @@ def main():
 			multiples[id_val] -= 1
 
 		observation = set_report_details(observation)
-		CosmosHelper.create_document(observation)
+		cosmos.create_item(observation)
 
 
 if __name__ == "__main__":
