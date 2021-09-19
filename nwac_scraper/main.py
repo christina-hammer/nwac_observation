@@ -31,7 +31,7 @@ def main():
 
 	cosmos = CosmosHelper()
 
-	for i in range(0, 6):
+	for i in range(0, (len(rows) - 1)):
 		
 		row = rows[i].findAll('td')
 		observation = parse_table_row(row)
