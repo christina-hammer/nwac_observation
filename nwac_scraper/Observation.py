@@ -1,7 +1,7 @@
 #Observation class
+import json
 
 class Observation:
-
 	##TODO: Add comments describing aattributes 
 	def __init__(self, date, observer_type, region, location_name, avalanche, signs_of_instability, id_val):
 		self.date = date
@@ -42,6 +42,9 @@ class Observation:
 
 		return s
 
+	def toJson(self):
+		return dict(id=self.id, observation_type="self.observation_type", region="self.region", latitude=self.latitutde, longitude=self.longitude, avalanche_reported=self.avalanche_reported, signs_of_instability_reported=self.signs_of_instability_reported, avalanches=self.avalanches, signs_of_instability=self.signs_of_instability, notes=self.notes)
+ 
 
 	def __eq__(self, observation):
 		if (not isinstance(observation, Observation)): return False
@@ -82,6 +85,9 @@ class SignsOfInstability:
 
 		return True
 
+	def toJson(self):
+		return dict(shooting_cracks=self.shooting_cracks, collapsing_or_whumpfing=self.collapsing_or_whumpfing)
+
 class Avalanche:
 
 	def __init__(self):
@@ -115,4 +121,8 @@ class Avalanche:
 		if (self.cause != avalanche.cause): return False
 
 		return True
+
+
+	def toJson(self):
+		return dict(size=self.size, type=self.type, intentional=self.intentional, elevation=self.elevation, aspect=self.aspect, comments=self.comments, cause=self.cause)
 

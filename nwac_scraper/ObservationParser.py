@@ -39,11 +39,18 @@ def set_latitude_longitude(observation):
 	longitude = 0
 	location = None
 
-	if (observation.region == "Mt Hood" or (observation.region == "Other" and ("Oregon" in observation.location_name.lower() or ", OR" in observation.location_name.lower()))):
-		location = geocodeOR(observation.location_name)
-	else:
-		location = geocodeWA(observation.location_name)
-		
+	retry = 0
+
+	while(retry < 3):
+		try:
+			if (observation.region == "Mt Hood" or (observation.region == "Other" and ("Oregon" in observation.location_name.lower() or ", OR" in observation.location_name.lower()))):
+				location = geocodeOR(observation.location_name)
+			else:
+				location = geocodeWA(observation.location_name)
+			break
+		except:
+			retry += 1
+
 	if (location is not None):
 		observation.latitude = location.latitude
 		observation.longitude = location.longitude
