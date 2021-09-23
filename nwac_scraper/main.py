@@ -61,7 +61,7 @@ def main():
 		cosmos.create_item(observation)
 		
 		progress += 1
-		if (progress%100):
+		if (progress%100 == 0):
 			print(str(progress) + " reports added")
 
 
