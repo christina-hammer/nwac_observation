@@ -30,8 +30,8 @@ def main():
 	observations = []
 
 	cosmos = CosmosHelper()
-
-	for i in range(0, 6):
+	
+	for i in range(0, (len(rows) - 1)):
 		
 		row = rows[i].findAll('td')
 		observation = parse_table_row(row)
@@ -46,6 +46,8 @@ def main():
 		prev_id = observation.id
 		observations.append(observation)
 
+
+	progress = 0
 	for observation in observations:
 
 		id_val = observation.id
@@ -54,8 +56,13 @@ def main():
 			observation.id = id_val + "-" + str(multiples[id_val])
 			multiples[id_val] -= 1
 
+		observation = set_latitude_longitude(observation)
 		observation = set_report_details(observation)
 		cosmos.create_item(observation)
+		
+		progress += 1
+		if (progress%100):
+			print(str(progress) + " reports added")
 
 
 if __name__ == "__main__":
